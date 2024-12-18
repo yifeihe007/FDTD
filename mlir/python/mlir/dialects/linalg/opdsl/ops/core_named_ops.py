@@ -421,6 +421,30 @@ def quantized_matmul(
     )
 
 
+
+@linalg_structured_op
+def curl_step(
+    Fx0=TensorDef(T1, S.NX, S.NY, S.NZ),
+    Fx1=TensorDef(T1, S.NX, S.NY, S.NZ),
+
+    Fy0=TensorDef(T1, S.NX, S.NY, S.NZ),
+    Fy1=TensorDef(T1, S.NX, S.NY, S.NZ),
+
+    Coef=ScalarDef(T1),
+    D0=ScalarDef(T1),
+    D1=ScalarDef(T1),
+    Fo=TensorDef(U, S.NX, S.NY, S.NZ, output=True),
+    cast=TypeFnAttrDef(default=TypeFn.cast_signed),
+):
+    domain(D.nx, D.ny, D.nz)
+    Fo[D.nx, D.ny, D.nz] += cast(U, Coef) * (
+        (cast(U, Fx0[D.nx, D.ny, D.nz]) - cast(U, Fx1[D.nx, D.ny, D.nz]))
+        / cast(U, D0)
+        - (cast(U, Fy0[D.nx, D.ny, D.nz]) - cast(U, Fy1[D.nx, D.ny, D.nz]))
+        / cast(U, D1)
+    )
+    
+
 @linalg_structured_op
 def matmul_transpose_a(
     A=TensorDef(T1, S.K, S.N),

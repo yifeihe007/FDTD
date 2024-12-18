@@ -31,6 +31,8 @@ MLIR_CAPI_EXPORTED void mlirRegisterAllLLVMTranslations(MlirContext context);
 /// Register all compiler passes of MLIR.
 MLIR_CAPI_EXPORTED void mlirRegisterAllPasses(void);
 
+MLIR_CAPI_EXPORTED void registerTestPasses(void);
+
 #ifdef __cplusplus
 }
 #endif

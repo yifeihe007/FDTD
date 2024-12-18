@@ -1242,6 +1242,164 @@ structured_op: !LinalgStructuredOpConfig
                       scalar_arg: BZp
 --- !LinalgOpConfig
 metadata: !LinalgOpMetadata
+  name: curl_step
+  cpp_class_name: CurlStepOp
+  doc: null
+structured_op: !LinalgStructuredOpConfig
+  args:
+  - !LinalgOperandDefConfig
+    name: Fx0
+    kind: input_tensor
+    type_var: T1
+    shape_map: affine_map<()[s0, s1, s2] -> (s0, s1, s2)>
+  - !LinalgOperandDefConfig
+    name: Fx1
+    kind: input_tensor
+    type_var: T1
+    shape_map: affine_map<()[s0, s1, s2] -> (s0, s1, s2)>
+  - !LinalgOperandDefConfig
+    name: Fy0
+    kind: input_tensor
+    type_var: T1
+    shape_map: affine_map<()[s0, s1, s2] -> (s0, s1, s2)>
+  - !LinalgOperandDefConfig
+    name: Fy1
+    kind: input_tensor
+    type_var: T1
+    shape_map: affine_map<()[s0, s1, s2] -> (s0, s1, s2)>
+  - !LinalgOperandDefConfig
+    name: Coef
+    kind: scalar
+    type_var: T1
+  - !LinalgOperandDefConfig
+    name: D0
+    kind: scalar
+    type_var: T1
+  - !LinalgOperandDefConfig
+    name: D1
+    kind: scalar
+    type_var: T1
+  - !LinalgOperandDefConfig
+    name: Fo
+    kind: output_tensor
+    type_var: U
+    shape_map: affine_map<()[s0, s1, s2] -> (s0, s1, s2)>
+  - !LinalgOperandDefConfig
+    name: cast
+    kind: type_fn_attr
+    default_fn: cast_signed
+  indexing_maps: !LinalgIndexingMapsConfig
+    static_indexing_maps:
+    - affine_map<(d0, d1, d2)[s0, s1, s2] -> (d0, d1, d2)>
+    - affine_map<(d0, d1, d2)[s0, s1, s2] -> (d0, d1, d2)>
+    - affine_map<(d0, d1, d2)[s0, s1, s2] -> (d0, d1, d2)>
+    - affine_map<(d0, d1, d2)[s0, s1, s2] -> (d0, d1, d2)>
+    - affine_map<(d0, d1, d2)[s0, s1, s2] -> ()>
+    - affine_map<(d0, d1, d2)[s0, s1, s2] -> ()>
+    - affine_map<(d0, d1, d2)[s0, s1, s2] -> ()>
+    - affine_map<(d0, d1, d2)[s0, s1, s2] -> (d0, d1, d2)>
+  iterator_types:
+  - parallel
+  - parallel
+  - parallel
+  assignments:
+  - !ScalarAssign
+    arg: Fo
+    value: !ScalarExpression
+      scalar_fn:
+        kind: binary
+        fn_name: add
+        operands:
+        - !ScalarExpression
+          scalar_arg: Fo
+        - !ScalarExpression
+          scalar_fn:
+            kind: binary
+            fn_name: mul
+            operands:
+            - !ScalarExpression
+              scalar_fn:
+                kind: type
+                attr_name: cast
+                type_var: U
+                operands:
+                - !ScalarExpression
+                  scalar_arg: Coef
+            - !ScalarExpression
+              scalar_fn:
+                kind: binary
+                fn_name: sub
+                operands:
+                - !ScalarExpression
+                  scalar_fn:
+                    kind: binary
+                    fn_name: div
+                    operands:
+                    - !ScalarExpression
+                      scalar_fn:
+                        kind: binary
+                        fn_name: sub
+                        operands:
+                        - !ScalarExpression
+                          scalar_fn:
+                            kind: type
+                            attr_name: cast
+                            type_var: U
+                            operands:
+                            - !ScalarExpression
+                              scalar_arg: Fx0
+                        - !ScalarExpression
+                          scalar_fn:
+                            kind: type
+                            attr_name: cast
+                            type_var: U
+                            operands:
+                            - !ScalarExpression
+                              scalar_arg: Fx1
+                    - !ScalarExpression
+                      scalar_fn:
+                        kind: type
+                        attr_name: cast
+                        type_var: U
+                        operands:
+                        - !ScalarExpression
+                          scalar_arg: D0
+                - !ScalarExpression
+                  scalar_fn:
+                    kind: binary
+                    fn_name: div
+                    operands:
+                    - !ScalarExpression
+                      scalar_fn:
+                        kind: binary
+                        fn_name: sub
+                        operands:
+                        - !ScalarExpression
+                          scalar_fn:
+                            kind: type
+                            attr_name: cast
+                            type_var: U
+                            operands:
+                            - !ScalarExpression
+                              scalar_arg: Fy0
+                        - !ScalarExpression
+                          scalar_fn:
+                            kind: type
+                            attr_name: cast
+                            type_var: U
+                            operands:
+                            - !ScalarExpression
+                              scalar_arg: Fy1
+                    - !ScalarExpression
+                      scalar_fn:
+                        kind: type
+                        attr_name: cast
+                        type_var: U
+                        operands:
+                        - !ScalarExpression
+                          scalar_arg: D1
+--- !LinalgOpConfig
+metadata: !LinalgOpMetadata
   name: matmul_transpose_a
   cpp_class_name: MatmulTransposeAOp
   doc: |-

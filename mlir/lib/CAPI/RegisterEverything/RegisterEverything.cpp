@@ -17,6 +17,12 @@
 #include "mlir/Target/LLVMIR/Dialect/Builtin/BuiltinToLLVMIRTranslation.h"
 #include "mlir/Target/LLVMIR/Dialect/LLVMIR/LLVMToLLVMIRTranslation.h"
 
+namespace mlir::test {
+void registerTestTransformDialectEraseSchedulePass();
+void registerTestTransformDialectInterpreterPass();
+void registerTestLowerToLLVM();
+}
+
 void mlirRegisterAllDialects(MlirDialectRegistry registry) {
   mlir::registerAllDialects(*unwrap(registry));
   mlir::registerAllExtensions(*unwrap(registry));
@@ -29,4 +35,11 @@ void mlirRegisterAllLLVMTranslations(MlirContext context) {
   ctx.appendDialectRegistry(registry);
 }
 
-void mlirRegisterAllPasses() { mlir::registerAllPasses(); }
+void registerTestPasses(){
+  mlir::test::registerTestTransformDialectEraseSchedulePass();
+  // mlir::test::registerTestTransformDialectInterpreterPass();
+  mlir::test::registerTestLowerToLLVM();
+}
+void mlirRegisterAllPasses() { 
+  registerTestPasses();
+  mlir::registerAllPasses(); }
